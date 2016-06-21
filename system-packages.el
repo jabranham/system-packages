@@ -66,3 +66,15 @@
         (async-shell-command (concat "sudo " command))
       (async-shell-command command))))
 
+(defun system-packages-remove-orphaned ()
+  "This function removes orphaned packages i.e. unused packages."
+  (interactive)
+  (if (equal system-packages-packagemanager "brew")
+      (error "Not supported on homebrew"))
+  (let ((command
+         (cond ((equal system-packages-packagemanager "pacman") "pacman -Rns $(pacman -Qtdq)")
+               ((equal system-packages-packagemanager "apt") "apt-get autoremove"))))))
+    (if (equal system-packages-usesudo t)
+        (async-shell-command (concat "sudo " command))
+      (async-shell-command command))
+  
