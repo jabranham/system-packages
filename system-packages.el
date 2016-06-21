@@ -1,61 +1,68 @@
-;;; system-packages.el --- functions to manage system packages
+  ;;; system-packages.el --- functions to manage system packages
 
 ;; Copyright
 
 ;; Author: J. Alexander Branham
 ;; Version: 0.1
 
-(defvar system-packages-packagemanager nil
-  "String containing the package manager to use")
-
-(when (executable-find "pacman")
-  (setq system-packages-packagemanager "pacman"))
-(when (executable-find "apt-get")
-  (setq system-packages-packagemanager "apt-get"))
-(when (executable-find "brew")
-  (setq system-packages-packagemanager "brew"))
-
-(defvar system-packages-installcommand nil
-  "Defines the command to use to install system packages ")
-(defvar system-packages-searchcommand nil
-  "Defines the command to use to search for system packages")
-(defvar system-packages-uninstallcommand nil
-  "Defines the command to use to uninstall system packages")
-(defvar system-packages-updatecommand nil
-  "Defines the command to use to update system packages")
-
-(when (equal system-packages-packagemanager "pacman")
-  (setq system-packages-installcommand "pacman -S"
-        system-packages-searchcommand "pacman -Ss"
-        system-packages-uninstallcommand "pacman -Rs"
-        system-packages-updatecommand "pacman -Syu"))
-
-(when (equal system-packages-packagemanager "apt-get")
-  (setq system-packages-installcommand "apt-get install"
-        system-packages-searchcommand "apt-cache search"
-        system-packages-uninstallcommand "apt-get remove"
-        system-packages-updatecommand "apt-get update && sudo apt-get upgrade"))
-
-(when (equal system-packages-packagemanager "brew")
-  (setq system-packages-installcommand "brew install"
-        system-packages-searchcommand "brew search"
-        system-packages-uninstallcommand "brew uninstall"
-        system-packages-updatecommand "brew update && brew upgrade"))
+(defvar system-packages-packagemanager
+  (if (executable-find "pacman") "pacman"
+    (if (executable-find "apt") "apt"
+      (if (executable-find "brew") "brew")))
+  "String containing the package manager to use. Currently
+    system-packages supports pacman, apt, and home-brew.")
 
 (defvar system-packages-usesudo t
-  "If non-nil, system-packages will use sudo for appropriate commands")
+  "If non-nil, system-packages will use sudo for appropriate
+  commands")
 
-(defun system-packages-install ()
-  (if (equal system-packages-usesudo t)
-      (async-shell-command (concat "sudo " system-packages-installcommand)))
-  (async-shell-command system-packages-installcommand))
+
+(defun system-packages-install (pack)
+  "Installs system packages"
+  (interactive "sWhat package to install?")
+  (let ((command
+         (cond ((equal system-packages-packagemanager "pacman") "pacman -S")
+               ((equal system-packages-packagemanager "apt") "apt-get install")
+               ((equal system-packages-packagemanager "brew") "brew install"))))
+    (if (equal system-packages-usesudo t)
+        (async-shell-command
+         (mapconcat 'identity
+                    '("sudo" command pack)
+                    " "))
+      (async-shell-command
+       (mapconcat 'identity
+                  '(command pack)
+                  " ")))))
+
+
 (defun system-packages-search ()
-  (async-shell-command system-packages-searchcommand))
+  "Search for system packages"
+  (interactive "sSearch string?")
+  (let ((command
+         (cond ((equal system-packages-packagemanager "pacman") "pacman -Ss")
+               ((equal system-packages-packagemanager "apt") "apt-cache search")
+               ((equal system-packages-packagemanager "brew") "brew search"))))
+      (async-shell-command command)))
+
 (defun system-packages-uninstall ()
-  (if (equal system-packages-usesudo t)
-      (async-shell-command (concat "sudo " system-packages-uninstallcommand)))B
-      (async-shell-command system-packages-uninstallcommand))
+  "Uninstalls installed system packages"
+  (interactive "sWhat package to uninstall?")
+  (let ((command
+         (cond ((equal system-packages-packagemanager "pacman") "pacman -Rs")
+               ((equal system-packages-packagemanager "apt") "apt-get remove")
+               ((equal system-packages-packagemanager "brew") "brew uninstall"))))
+    (if (equal system-packages-usesudo t)
+        (async-shell-command (concat "sudo " command))
+      (async-shell-command command))))
+
 (defun system-packages-update ()
-  (if (equal system-packages-usesudo t)
-      (async-shell-command (concat "sudo " system-packages-updatecommand))
-    (async-shell-command system-packages-updatecommand)))
+  "Updates installed system packages"
+  (interactive)
+  (let ((command
+         (cond ((equal system-packages-packagemanager "pacman") "pacman -Syu")
+               ((equal system-packages-packagemanager "apt") "apt-get update && sudo apt-get upgrade")
+               ((equal system-packages-packagemanager "brew") "brew update && brew upgrade"))))
+    (if (equal system-packages-usesudo t)
+        (async-shell-command (concat "sudo " command))
+      (async-shell-command command))))
+
