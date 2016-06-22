@@ -51,7 +51,10 @@
   "String containing the package manager to use. Currently
     system-packages supports pacman, apt, and home-brew.")
 
-(defvar system-packages-usesudo t
+(defvar system-packages-usesudo
+  (if (executable-find "pacman") t
+    (if (executable-find "apt") t
+      (if (executable-find "brew") nil)))
   "If non-nil, system-packages will use sudo for appropriate
   commands")
 
@@ -116,5 +119,15 @@
     (if (equal system-packages-usesudo t)
         (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
       (async-shell-command (mapconcat 'identity (list command) " ")))))
+
+;; (defun system-packages-list-installed-packages ()
+;;   "List explicitly installed packages. With the prefix argument,
+;; list all installed packages."
+;;   (interactive)
+;;   (let ((command
+;;          (if (equal system-packages-packagemanager "pacman") "pacman -"
+;;            (if (equal system-packages-packagemanager "apt") "apt-cache search"
+;;              (if (equal system-packages-packagemanager "brew") "brew search")))))
+;;     (async-shell-command (mapconcat 'identity (list command pack) " "))))
                
 (provide 'system-packages)
