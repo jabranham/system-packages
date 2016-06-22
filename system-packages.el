@@ -55,6 +55,10 @@
   "If non-nil, system-packages will use sudo for appropriate
   commands")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; functions on named packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun system-packages-install (pack)
   "Installs system packages"
   (interactive "sWhat package to install?")
@@ -64,38 +68,42 @@
              (if (equal system-packages-packagemanager "brew") "brew install")))))
     (if (equal system-packages-usesudo t)
         (async-shell-command (mapconcat 'identity (list "sudo" command pack) " "))
-      (async-shell-command (mapconcat 'identity '(command pack) " ")))))
+      (async-shell-command (mapconcat 'identity (list command pack) " ")))))
 
-(defun system-packages-search ()
+(defun system-packages-search (pack)
   "Search for system packages"
   (interactive "sSearch string?")
   (let ((command
-         (cond ((equal system-packages-packagemanager "pacman") "pacman -Ss")
-               ((equal system-packages-packagemanager "apt") "apt-cache search")
-               ((equal system-packages-packagemanager "brew") "brew search"))))
-      (async-shell-command command)))
+         (if (equal system-packages-packagemanager "pacman") "pacman -Ss"
+           (if (equal system-packages-packagemanager "apt") "apt-cache search"
+             (if (equal system-packages-packagemanager "brew") "brew search")))))
+    (async-shell-command (mapconcat 'identity (list command pack) " "))))
 
-(defun system-packages-uninstall ()
+(defun system-packages-uninstall (pack)
   "Uninstalls installed system packages"
   (interactive "sWhat package to uninstall?")
   (let ((command
-         (cond ((equal system-packages-packagemanager "pacman") "pacman -Rs")
-               ((equal system-packages-packagemanager "apt") "apt-get remove")
-               ((equal system-packages-packagemanager "brew") "brew uninstall"))))
+         (if (equal system-packages-packagemanager "pacman") "pacman -Rs"
+           (if (equal system-packages-packagemanager "apt") "apt-get remove"
+             (if (equal system-packages-packagemanager "brew") "brew uninstall")))))
     (if (equal system-packages-usesudo t)
-        (async-shell-command (concat "sudo " command))
-      (async-shell-command command))))
+        (async-shell-command (mapconcat 'identity (list "sudo" command pack) " "))
+      (async-shell-command (mapconcat 'identity (list command pack) " ")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; functions that don't take a named package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun system-packages-update ()
   "Updates installed system packages"
   (interactive)
   (let ((command
-         (cond ((equal system-packages-packagemanager "pacman") "pacman -Syu")
-               ((equal system-packages-packagemanager "apt") "apt-get update && sudo apt-get upgrade")
-               ((equal system-packages-packagemanager "brew") "brew update && brew upgrade"))))
+         (if (equal system-packages-packagemanager "pacman") "pacman -Syu"
+           (if (equal system-packages-packagemanager "apt") "apt-get update && sudo apt-get upgrade"
+             (if (equal system-packages-packagemanager "brew") "brew update && brew upgrade")))))
     (if (equal system-packages-usesudo t)
-        (async-shell-command (concat "sudo " command))
-      (async-shell-command command))))
+        (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
+      (async-shell-command (mapconcat 'identity (list command) " ")))))
 
 (defun system-packages-remove-orphaned ()
   "This function removes orphaned packages i.e. unused packages."
@@ -103,10 +111,10 @@
   (if (equal system-packages-packagemanager "brew")
       (error "Not supported on homebrew"))
   (let ((command
-         (cond ((equal system-packages-packagemanager "pacman") "pacman -Rns $(pacman -Qtdq)")
-               ((equal system-packages-packagemanager "apt") "apt-get autoremove"))))))
+         (if (equal system-packages-packagemanager "pacman") "pacman -Rns $(pacman -Qtdq)"
+           (if (equal system-packages-packagemanager "apt") "apt-get autoremove"))))
     (if (equal system-packages-usesudo t)
-        (async-shell-command (concat "sudo " command))
-      (async-shell-command command))
-  
+        (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
+      (async-shell-command (mapconcat 'identity (list command) " ")))))
+               
 (provide 'system-packages)
