@@ -45,16 +45,19 @@
   :group 'packages)
 
 (defvar system-packages-packagemanager
-  (if (executable-find "pacman") "pacman"
-    (if (executable-find "apt") "apt"
-      (if (executable-find "brew") "brew")))
+  (if (executable-find "pacaur") "pacaur"
+    (if (executable-find "pacman") "pacman"
+      (if (executable-find "apt") "apt"
+        (if (executable-find "brew") "brew"))))
   "String containing the package manager to use. Currently
-    system-packages supports pacman, apt, and home-brew.")
+    system-packages supports pacman, pacaur, apt, and
+    homebrew.")
 
 (defvar system-packages-usesudo
-  (if (executable-find "pacman") t
-    (if (executable-find "apt") t
-      (if (executable-find "brew") nil)))
+  (if (equal system-packages-packagemanager "pacman") t
+    (if (equal system-packages-packagemanager "apt") t
+      (if (equal system-packages-packagemanager "brew") nil
+        (if (equal system-packages-packagemanager "pacaur") nil))))
   "If non-nil, system-packages will use sudo for appropriate
   commands")
 
@@ -66,9 +69,10 @@
   "Installs system packages"
   (interactive "sWhat package to install?")
   (let ((command
+         (if (equal system-packages-packagemanager "pacaur") "pacaur -S"
          (if (equal system-packages-packagemanager "pacman") "pacman -S"
            (if (equal system-packages-packagemanager "apt") "apt-get install"
-             (if (equal system-packages-packagemanager "brew") "brew install")))))
+             (if (equal system-packages-packagemanager "brew") "brew install"))))))
     (if (equal system-packages-usesudo t)
         (async-shell-command (mapconcat 'identity (list "sudo" command pack) " "))
       (async-shell-command (mapconcat 'identity (list command pack) " ")))))
@@ -77,18 +81,20 @@
   "Search for system packages"
   (interactive "sSearch string?")
   (let ((command
+         (if (equal system-packages-packagemanager "pacaur") "pacaur -Ss"
          (if (equal system-packages-packagemanager "pacman") "pacman -Ss"
            (if (equal system-packages-packagemanager "apt") "apt-cache search"
-             (if (equal system-packages-packagemanager "brew") "brew search")))))
+             (if (equal system-packages-packagemanager "brew") "brew search"))))))
     (async-shell-command (mapconcat 'identity (list command pack) " "))))
 
 (defun system-packages-uninstall (pack)
   "Uninstalls installed system packages"
   (interactive "sWhat package to uninstall?")
   (let ((command
+         (if (equal system-packages-packagemanager "pacaur") "pacaur -Rs"
          (if (equal system-packages-packagemanager "pacman") "pacman -Rs"
            (if (equal system-packages-packagemanager "apt") "apt-get remove"
-             (if (equal system-packages-packagemanager "brew") "brew uninstall")))))
+             (if (equal system-packages-packagemanager "brew") "brew uninstall"))))))
     (if (equal system-packages-usesudo t)
         (async-shell-command (mapconcat 'identity (list "sudo" command pack) " "))
       (async-shell-command (mapconcat 'identity (list command pack) " ")))))
@@ -101,9 +107,10 @@
   "Updates installed system packages"
   (interactive)
   (let ((command
+         (if (equal system-packages-packagemanager "pacaur") "pacaur -Syu"
          (if (equal system-packages-packagemanager "pacman") "pacman -Syu"
            (if (equal system-packages-packagemanager "apt") "apt-get update && sudo apt-get upgrade"
-             (if (equal system-packages-packagemanager "brew") "brew update && brew upgrade")))))
+             (if (equal system-packages-packagemanager "brew") "brew update && brew upgrade"))))))
     (if (equal system-packages-usesudo t)
         (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
       (async-shell-command (mapconcat 'identity (list command) " ")))))
@@ -114,8 +121,9 @@
   (if (equal system-packages-packagemanager "brew")
       (error "Not supported on homebrew"))
   (let ((command
+         (if (equal system-packages-packagemanager "pacaur") "pacman -Rns $(pacman -Qtdq)"
          (if (equal system-packages-packagemanager "pacman") "pacman -Rns $(pacman -Qtdq)"
-           (if (equal system-packages-packagemanager "apt") "apt-get autoremove"))))
+           (if (equal system-packages-packagemanager "apt") "apt-get autoremove")))))
     (if (equal system-packages-usesudo t)
         (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
       (async-shell-command (mapconcat 'identity (list command) " ")))))
@@ -127,7 +135,8 @@ list all installed packages."
   (if (equal system-packages-packagemanager "apt")
       (error "Not supported on apt systems"))
   (let ((command
-         (if (and arg (equal system-packages-packagemanager "pacman")) "pacman -Q"
+         (if (and arg (or (equal system-packages-packagemanager "pacaur")
+                          (equal system-packages-packagemanager "pacman"))) "pacman -Q"
            (if (equal system-packages-packagemanager "pacman") "pacman -Qe"
              (if (equal system-packages-packagemanager "brew") "brew list")))))
          (async-shell-command command)))
