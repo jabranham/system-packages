@@ -120,14 +120,16 @@
         (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
       (async-shell-command (mapconcat 'identity (list command) " ")))))
 
-;; (defun system-packages-list-installed-packages ()
-;;   "List explicitly installed packages. With the prefix argument,
-;; list all installed packages."
-;;   (interactive)
-;;   (let ((command
-;;          (if (equal system-packages-packagemanager "pacman") "pacman -"
-;;            (if (equal system-packages-packagemanager "apt") "apt-cache search"
-;;              (if (equal system-packages-packagemanager "brew") "brew search")))))
-;;     (async-shell-command (mapconcat 'identity (list command pack) " "))))
+(defun system-packages-list-installed-packages (arg)
+  "List explicitly installed packages. With \\[universal-argument],
+list all installed packages."
+  (interactive "P")
+  (if (equal system-packages-packagemanager "apt")
+      (error "Not supported on apt systems"))
+  (let ((command
+         (if (and arg (equal system-packages-packagemanager "pacman")) "pacman -Q"
+           (if (equal system-packages-packagemanager "pacman") "pacman -Qe"
+             (if (equal system-packages-packagemanager "brew") "brew list")))))
+         (async-shell-command command)))
                
 (provide 'system-packages)
