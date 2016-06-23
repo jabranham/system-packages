@@ -137,8 +137,9 @@ list all installed packages."
   (let ((command
          (if (and arg (or (equal system-packages-packagemanager "pacaur")
                           (equal system-packages-packagemanager "pacman"))) "pacman -Q"
-           (if (equal system-packages-packagemanager "pacman") "pacman -Qe"
+           (if (equal (or (equal system-packages-packagemanager "pacaur")
+                          (equal system-packages-packagemanager "pacman")) "pacman -Qe"
              (if (equal system-packages-packagemanager "brew") "brew list")))))
-         (async-shell-command command)))
+         (async-shell-command command))))
                
 (provide 'system-packages)
