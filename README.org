@@ -1,0 +1,43 @@
+#+TITLE: System Packages
+#+AUTHOR: J. Alexander Branham
+#+LANGUAGE: en
+
+This is a collection of functions to make handling installed system
+packages more convenient through emacs. 
+
+* Installation
+
+  System packages is not available on MELPA, so the easiest way to use
+  it is to =git clone= it somewhere and add that to your load-path. If
+  you use [[https://github.com/jwiegley/use-package][use-package]], configuration may look something like this:
+
+  #+BEGIN_SRC emacs-lisp :eval never
+    (use-package system-packages
+      :load-path "~/path/to/system-packages")
+  #+END_SRC
+
+* Configuration
+  
+  The package attempts to guess which package manager you use. If it
+  guesses wrong (or you'd like to set it manually), you may modify the
+  variable =system-packages-packagemanager=. 
+
+  We also attempt to guess whether or not to use sudo with appropriate
+  commands (like installing and uninstalling packages). Some package
+  managers (like homebrew) warn not to use sudo, others (like =apt=)
+  need sudo privileges. You may set this manually by configuring
+  =system-packages-usesudo=
+
+* Usage
+
+  The package doesn't presume to set keybindings for you, so you may
+  set those up yourself or simply call functions with =M-x=. Here's a
+  list of current functions (all start with =system-packages=)
+
+  - =install=
+  - =uninstall=
+  - =search=
+  - =update=
+  - =remove-orphaned=
+  - =list-installed-packages=
+
