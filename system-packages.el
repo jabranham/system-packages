@@ -38,28 +38,83 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'cl))
+
 (defgroup system-packages nil
   "Manages system packages"
   :tag "System Packages"
   :prefix "system-packages"
   :group 'packages)
 
+(defconst system-packages-supported-package-managers
+  '((pacaur .
+            ((default-sudo . nil)
+             (install . "pacaur -S")
+             (search . "pacaur -Ss")
+             (uninstall . "pacaur -Rs")
+             (update . "pacaur -Syu")
+             (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
+             (list-installed-packages . "pacman -Q")
+             (list-installed-packages-all . "pacman -Qe")))
+    (pacman .
+            ((default-sudo . t)
+             (install . "pacman -S")
+             (search . "pacman -Ss")
+             (uninstall . "pacman -Rs")
+             (update . "pacman -Syu")
+             (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
+             (list-installed-packages . "pacman -Q")
+             (list-installed-packages-all . "pacman -Q")))
+    (apt .
+         ((default-sudo . t)
+          (install . "apt-get install")
+          (search . "apt-cache search")
+          (uninstall . "apt-get remove")
+          (update . ("apt-get update" "apt-get upgrade"))
+          (remove-orphaned . "apt-get autoremove")
+          (list-installed-packages . nil)
+          (list-installed-packages-all . nil)))
+    (brew .
+          ((default-sudo . nil)
+           (install . "brew install")
+           (search . "brew search")
+           (uninstall . "brew uninstall")
+           (update . ("brew update" "brew upgrade --all"))
+           (remove-orphaned . nil)
+           (list-installed-packages . "brew list")
+           (list-installed-packages-all . nil)))))
+
 (defvar system-packages-packagemanager
-  (if (executable-find "pacaur") "pacaur"
-    (if (executable-find "pacman") "pacman"
-      (if (executable-find "apt") "apt"
-        (if (executable-find "brew") "brew"))))
+  (cl-loop for (name . prop) in system-packages-supported-package-managers
+           for path = (executable-find (symbol-name name))
+           when path
+           return name)
   "String containing the package manager to use. Currently
     system-packages supports pacman, pacaur, apt, and
     homebrew. Tries to be smart about selecting the default.")
 
 (defvar system-packages-usesudo
-  (if (equal system-packages-packagemanager "pacman") t
-    (if (equal system-packages-packagemanager "apt") t
-      (if (equal system-packages-packagemanager "brew") nil
-        (if (equal system-packages-packagemanager "pacaur") nil))))
+  (cdr (assoc 'default-sudo (cdr (assoc system-packages-packagemanager
+                                        system-packages-supported-package-managers))))
   "If non-nil, system-packages will use sudo for appropriate
   commands. Tries to be smart for selecting the default.")
+
+(defun system-packages--run-command (action &optional pack)
+  "ACTION can be `default-sudo', `install', `search',
+`uninstall' etc. Run the command according to
+`system-packages-supported-package-managers' and ACTION."
+  (let ((command
+         (cdr (assoc action (cdr (assoc system-packages-packagemanager
+                                        system-packages-supported-package-managers))))))
+    (unless command
+      (error (format "%S not supported in %S" action system-packages-packagemanager)))
+    (unless (listp command)
+      (setq command (list command)))
+    (when system-packages-usesudo
+      (setq command (mapcar (lambda (part) (concat "sudo " part)) command)))
+    (setq command (mapconcat 'identity command " && "))
+    (async-shell-command (mapconcat 'identity (list command pack) " "))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; functions on named packages
@@ -69,38 +124,19 @@
   "Installs system packages using the package manager named in
 system-packages-packagemanager."
   (interactive "sWhat package to install?")
-  (let ((command
-         (if (equal system-packages-packagemanager "pacaur") "pacaur -S"
-           (if (equal system-packages-packagemanager "pacman") "pacman -S"
-             (if (equal system-packages-packagemanager "apt") "apt-get install"
-               (if (equal system-packages-packagemanager "brew") "brew install"))))))
-    (if (equal system-packages-usesudo t)
-        (async-shell-command (mapconcat 'identity (list "sudo" command pack) " "))
-      (async-shell-command (mapconcat 'identity (list command pack) " ")))))
+  (system-packages--run-command 'install pack))
 
 (defun system-packages-search (pack)
   "Search for system packages using the package manager named in
 system-packages-packagemanager."
   (interactive "sSearch string?")
-  (let ((command
-         (if (equal system-packages-packagemanager "pacaur") "pacaur -Ss"
-           (if (equal system-packages-packagemanager "pacman") "pacman -Ss"
-             (if (equal system-packages-packagemanager "apt") "apt-cache search"
-               (if (equal system-packages-packagemanager "brew") "brew search"))))))
-    (async-shell-command (mapconcat 'identity (list command pack) " "))))
+  (system-packages--run-command 'search pack))
 
 (defun system-packages-uninstall (pack)
   "Uninstalls installed system packages using the package manager named in
 system-packages-packagemanager."
   (interactive "sWhat package to uninstall?")
-  (let ((command
-         (if (equal system-packages-packagemanager "pacaur") "pacaur -Rs"
-           (if (equal system-packages-packagemanager "pacman") "pacman -Rs"
-             (if (equal system-packages-packagemanager "apt") "apt-get remove"
-               (if (equal system-packages-packagemanager "brew") "brew uninstall"))))))
-    (if (equal system-packages-usesudo t)
-        (async-shell-command (mapconcat 'identity (list "sudo" command pack) " "))
-      (async-shell-command (mapconcat 'identity (list command pack) " ")))))
+  (system-packages--run-command 'uninstall pack))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; functions that don't take a named package
@@ -110,40 +146,21 @@ system-packages-packagemanager."
   "Updates installed system packages using the package manager named in
 system-packages-packagemanager."
   (interactive)
-  (let ((command
-         (if (equal system-packages-packagemanager "pacaur") "pacaur -Syu"
-           (if (equal system-packages-packagemanager "pacman") "pacman -Syu"
-             (if (equal system-packages-packagemanager "apt") "apt-get update && sudo apt-get upgrade"
-               (if (equal system-packages-packagemanager "brew") "brew update && brew upgrade"))))))
-    (if (equal system-packages-usesudo t)
-        (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
-      (async-shell-command (mapconcat 'identity (list command) " ")))))
+  (system-packages--run-command 'update))
 
 (defun system-packages-remove-orphaned ()
   "This function removes orphaned packages (i.e. unused packages). using the package manager named in
 system-packages-packagemanager."
   (interactive)
-  (if (equal system-packages-packagemanager "brew")
-      (error "Not supported on homebrew"))
-  (let ((command
-         (if (equal system-packages-packagemanager "pacaur") "pacman -Rns $(pacman -Qtdq)"
-           (if (equal system-packages-packagemanager "pacman") "pacman -Rns $(pacman -Qtdq)"
-             (if (equal system-packages-packagemanager "apt") "apt-get autoremove")))))
-    (if (equal system-packages-usesudo t)
-        (async-shell-command (mapconcat 'identity (list "sudo" command) " "))
-      (async-shell-command (mapconcat 'identity (list command) " ")))))
+  (system-packages--run-command 'remove-orphaned))
 
 (defun system-packages-list-installed-packages (arg)
   "List explicitly installed packages using the package manager
 named in system-packages-packagemanager. With
 \\[universal-argument], list all installed packages."
   (interactive "P")
-  (if (equal system-packages-packagemanager "apt")
-      (error "Not supported on apt systems"))
-  (let ((command
-         (if (and arg (or (equal system-packages-packagemanager "pacaur") (equal system-packages-packagemanager "pacman"))) "pacman -Q"
-           (if (or (equal system-packages-packagemanager "pacaur") (equal system-packages-packagemanager "pacman")) "pacman -Qe"
-             (if (equal system-packages-packagemanager "brew") "brew list")))))
-    (async-shell-command command)))
+  (if arg
+      (system-packages--run-command 'list-installed-packages-all)
+    (system-packages--run-command 'list-installed-packages)))
                
 (provide 'system-packages)
