@@ -88,6 +88,14 @@
           (remove-orphaned . "dnf autoremove")
           (list-installed-packages . "dnf list --installed")
           (list-installed-packages-all . nil)))
+    (yum .
+         ((default-sudo . t)
+          (install . "yum install")
+          (search . "yum search")
+          (uninstall . "yum remove")
+          (update . ("yum update"))
+          (remove-orphaned . "yum autoremove")
+          (list-installed-packages . "yum list")
           (list-installed-packages-all . nil)))
     ;; Mac
     (brew .
