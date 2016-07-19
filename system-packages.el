@@ -78,6 +78,16 @@
           (remove-orphaned . "apt-get autoremove")
           (list-installed-packages . nil)
           (list-installed-packages-all . nil)))
+    ;; Fedora
+    (dnf .
+         ((default-sudo . t)
+          (install . "dnf install")
+          (search . "dnf search")
+          (uninstall . "dnf remove")
+          (update . ("dnf upgrade"))
+          (remove-orphaned . "dnf autoremove")
+          (list-installed-packages . "dnf list --installed")
+          (list-installed-packages-all . nil)))
           (list-installed-packages-all . nil)))
     ;; Mac
     (brew .
