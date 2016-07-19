@@ -69,6 +69,15 @@
              (list-installed-packages . "pacman -Qe")
              (list-installed-packages-all . "pacman -Q")))
     ;; Debian (and Ubuntu) based systems
+    (aptitude .
+              ((default-sudo . t)
+               (install . "aptitude install")
+               (search . "aptitude search")
+               (uninstall . "aptitude remove")
+               (update . ("aptitude update"))
+               (remove-orphaned . nil) ; aptitude does this automatically
+               (list-installed-packages . "aptitude search '~i!~M'")
+               (list-installed-packages-all . nil)))
     (apt .
          ((default-sudo . t)
           (install . "apt-get install")
