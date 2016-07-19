@@ -48,7 +48,9 @@
   :group 'packages)
 
 (defconst system-packages-supported-package-managers
-  '((pacaur .
+  '(
+    ;; Arch-based systems
+    (pacaur .
             ((default-sudo . nil)
              (install . "pacaur -S")
              (search . "pacaur -Ss")
@@ -66,6 +68,7 @@
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
              (list-installed-packages . "pacman -Qe")
              (list-installed-packages-all . "pacman -Q")))
+    ;; Debian (and Ubuntu) based systems
     (apt .
          ((default-sudo . t)
           (install . "apt-get install")
@@ -75,6 +78,8 @@
           (remove-orphaned . "apt-get autoremove")
           (list-installed-packages . nil)
           (list-installed-packages-all . nil)))
+          (list-installed-packages-all . nil)))
+    ;; Mac
     (brew .
           ((default-sudo . nil)
            (install . "brew install")
