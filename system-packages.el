@@ -55,8 +55,8 @@
              (uninstall . "pacaur -Rs")
              (update . "pacaur -Syu")
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
-             (list-installed-packages . "pacman -Q")
-             (list-installed-packages-all . "pacman -Qe")))
+             (list-installed-packages . "pacman -Qe")
+             (list-installed-packages-all . "pacman -Q")))
     (pacman .
             ((default-sudo . t)
              (install . "pacman -S")
@@ -64,7 +64,7 @@
              (uninstall . "pacman -Rs")
              (update . "pacman -Syu")
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
-             (list-installed-packages . "pacman -Q")
+             (list-installed-packages . "pacman -Qe")
              (list-installed-packages-all . "pacman -Q")))
     (apt .
          ((default-sudo . t)
@@ -123,19 +123,19 @@
 (defun system-packages-install (pack)
   "Installs system packages using the package manager named in
 system-packages-packagemanager."
-  (interactive "sWhat package to install?")
+  (interactive "sWhat package to install: ")
   (system-packages--run-command 'install pack))
 
 (defun system-packages-search (pack)
   "Search for system packages using the package manager named in
 system-packages-packagemanager."
-  (interactive "sSearch string?")
+  (interactive "sSearch string: ")
   (system-packages--run-command 'search pack))
 
 (defun system-packages-uninstall (pack)
   "Uninstalls installed system packages using the package manager named in
 system-packages-packagemanager."
-  (interactive "sWhat package to uninstall?")
+  (interactive "sWhat package to uninstall: ")
   (system-packages--run-command 'uninstall pack))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
