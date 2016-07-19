@@ -55,8 +55,8 @@
              (uninstall . "pacaur -Rs")
              (update . "pacaur -Syu")
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
-             (list-installed-packages . "pacman -Q")
-             (list-installed-packages-all . "pacman -Qe")))
+             (list-installed-packages . "pacman -Qe")
+             (list-installed-packages-all . "pacman -Q")))
     (pacman .
             ((default-sudo . t)
              (install . "pacman -S")
@@ -64,7 +64,7 @@
              (uninstall . "pacman -Rs")
              (update . "pacman -Syu")
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
-             (list-installed-packages . "pacman -Q")
+             (list-installed-packages . "pacman -Qe")
              (list-installed-packages-all . "pacman -Q")))
     (apt .
          ((default-sudo . t)
