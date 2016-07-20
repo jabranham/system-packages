@@ -6,6 +6,7 @@
 ;; Maintainer: J. Alexander Branham <branham@utexas.edu>
 ;; URL: https://github.com/jabranham/system-packages
 ;; Version: 0.1
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -38,8 +39,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl-lib)
 
 (defgroup system-packages nil
   "Manages system packages"
