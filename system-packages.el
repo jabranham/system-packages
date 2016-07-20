@@ -117,14 +117,15 @@
            (list-installed-packages . "brew list")
            (list-installed-packages-all . nil)))))
 
-(defvar system-packages-packagemanager
+(defcustom system-packages-packagemanager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
            for path = (executable-find (symbol-name name))
            when path
            return name)
   "String containing the package manager to use. Currently
     system-packages supports pacman, pacaur, apt, and
-    homebrew. Tries to be smart about selecting the default.")
+    homebrew. Tries to be smart about selecting the default."
+  :type 'symbol)
 
 (defvar system-packages-usesudo
   (cdr (assoc 'default-sudo (cdr (assoc system-packages-packagemanager
