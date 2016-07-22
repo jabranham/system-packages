@@ -49,6 +49,16 @@
 
 (defconst system-packages-supported-package-managers
   '(
+    ;; Mac
+    (brew .
+          ((default-sudo . nil)
+           (install . "brew install")
+           (search . "brew search")
+           (uninstall . "brew uninstall")
+           (update . ("brew update" "brew upgrade --all"))
+           (remove-orphaned . nil)
+           (list-installed-packages . "brew list")
+           (list-installed-packages-all . nil)))
     ;; Arch-based systems
     (pacaur .
             ((default-sudo . nil)
@@ -105,17 +115,7 @@
           (update . ("yum update"))
           (remove-orphaned . "yum autoremove")
           (list-installed-packages . "yum list")
-          (list-installed-packages-all . nil)))
-    ;; Mac
-    (brew .
-          ((default-sudo . nil)
-           (install . "brew install")
-           (search . "brew search")
-           (uninstall . "brew uninstall")
-           (update . ("brew update" "brew upgrade --all"))
-           (remove-orphaned . nil)
-           (list-installed-packages . "brew list")
-           (list-installed-packages-all . nil)))))
+          (list-installed-packages-all . nil)))))
 
 (defcustom system-packages-packagemanager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
