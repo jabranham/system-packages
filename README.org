@@ -7,13 +7,12 @@ packages more convenient through emacs.
 
 * Installation
 
-  System packages is not available on MELPA, so the easiest way to use
-  it is to =git clone= it somewhere and add that to your load-path. If
-  you use [[https://github.com/jwiegley/use-package][use-package]], configuration may look something like this:
+  System packages is available on [[https://melpa.org/#/][MELPA]]. If you use [[https://github.com/jwiegley/use-package][use-package]] and
+  have MELPA set up correctly, all you'll need is something like the following:
 
   #+BEGIN_SRC emacs-lisp :eval never
     (use-package system-packages
-      :load-path "~/path/to/system-packages")
+      :ensure t)
   #+END_SRC
 
 * Configuration
