@@ -153,18 +153,21 @@
 ;; functions on named packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;###autoload
 (defun system-packages-install (pack)
   "Installs system packages using the package manager named in
 system-packages-packagemanager."
   (interactive "sWhat package to install: ")
   (system-packages--run-command 'install pack))
 
+;;;###autoload
 (defun system-packages-search (pack)
   "Search for system packages using the package manager named in
 system-packages-packagemanager."
   (interactive "sSearch string: ")
   (system-packages--run-command 'search pack))
 
+;;;###autoload
 (defun system-packages-uninstall (pack)
   "Uninstalls installed system packages using the package manager named in
 system-packages-packagemanager."
@@ -175,18 +178,21 @@ system-packages-packagemanager."
 ;; functions that don't take a named package
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;###autoload
 (defun system-packages-update ()
   "Updates installed system packages using the package manager named in
 system-packages-packagemanager."
   (interactive)
   (system-packages--run-command 'update))
 
+;;;###autoload
 (defun system-packages-remove-orphaned ()
   "This function removes orphaned packages (i.e. unused packages). using the package manager named in
 system-packages-packagemanager."
   (interactive)
   (system-packages--run-command 'remove-orphaned))
 
+;;;###autoload
 (defun system-packages-list-installed-packages (arg)
   "List explicitly installed packages using the package manager
 named in system-packages-packagemanager. With
