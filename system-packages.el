@@ -56,9 +56,16 @@
            (search . "brew search")
            (uninstall . "brew uninstall")
            (update . ("brew update" "brew upgrade --all"))
+           (clean-cache . "brew cleanup")
+           (log . nil)
+           (get-info . nil)
+           (get-info-remote . nil)
+           (list-files-provided-by . "brew ls --verbose")
+           (verify-all-packages . nil)
+           (verify-all-dependencies . nil)
            (remove-orphaned . nil)
-           (list-installed-packages . "brew list")
-           (list-installed-packages-all . nil)
+           (list-installed-packages . "brew list --installed")
+           (list-installed-packages-all . "brew list")
            (list-dependencies-of . "brew deps")))
     ;; Arch-based systems
     (pacaur .
@@ -67,6 +74,13 @@
              (search . "pacaur -Ss")
              (uninstall . "pacaur -Rs")
              (update . "pacaur -Syu")
+             (clean-cache . "pacaur -Sc")
+             (log . "cat /var/log/pacman.log")
+             (get-info . "pacaur -Qi")
+             (get-info-remote . "pacaur -Si")
+             (list-files-provided-by . "pacaur -Ql")
+             (verify-all-packages . "pacaur -Qkk")
+             (verify-all-dependencies . "pacaur -Dk")
              (remove-orphaned . "pacaur -Rns $(pacman -Qtdq)")
              (list-installed-packages . "pacaur -Qe")
              (list-installed-packages-all . "pacaur -Q")
@@ -77,6 +91,13 @@
              (search . "pacman -Ss")
              (uninstall . "pacman -Rs")
              (update . "pacman -Syu")
+             (clean-cache . "pacman -Sc")
+             (log . "cat /var/log/pacman.log")
+             (get-info . "pacman -Qi")
+             (get-info-remote . "pacman -Si")
+             (list-files-provided-by . "pacman -Ql")
+             (verify-all-packages . "pacman -Qkk")
+             (verify-all-dependencies . "pacman -Dk")
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
              (list-installed-packages . "pacman -Qe")
              (list-installed-packages-all . "pacman -Q")
@@ -88,9 +109,16 @@
                (search . "aptitude search")
                (uninstall . "aptitude remove")
                (update . ("aptitude update"))
+               (clean-cache . "aptitude clean")
+               (log . "cat /var/log/dpkg.log")
+               (get-info . "aptitude show")
+               (get-info-remote . "aptitude show")
+               (list-files-provided-by . "dpkg -L")
+               (verify-all-packages . "debsums")
+               (verify-all-dependencies . "apt-get check")
                (remove-orphaned . nil) ; aptitude does this automatically
                (list-installed-packages . "aptitude search '~i!~M'")
-               (list-installed-packages-all . nil)
+               (list-installed-packages-all . "aptitude search '~i!~M'")
                (list-dependencies-of . "apt-cache deps")))
     (apt .
          ((default-sudo . t)
@@ -98,6 +126,13 @@
           (search . "apt-cache search")
           (uninstall . "apt-get remove")
           (update . ("apt-get update" "apt-get upgrade"))
+          (clean-cache . "apt-get clean")
+          (log . "cat /var/log/dpkg.log")
+          (get-info . "dpkg -s")
+          (get-info-remote . "apt-cache show")
+          (list-files-provided-by . "dpkg -L")
+          (verify-all-packages . "debsums")
+          (verify-all-dependencies . "apt-get check")
           (remove-orphaned . "apt-get autoremove")
           (list-installed-packages . nil)
           (list-installed-packages-all . nil)
@@ -109,20 +144,17 @@
           (search . "dnf search")
           (uninstall . "dnf remove")
           (update . ("dnf upgrade"))
+          (clean-cache . "dnf clean all")
+          (log . "dnf history")
+          (get-info . "rpm -qi")
+          (get-info-remote . "dnf info")
+          (list-files-provided-by . "rpm -ql")
+          (verify-all-packages . "rpm -Va")
+          (verify-all-dependencies . "dnf repoquery --requires")
           (remove-orphaned . "dnf autoremove")
           (list-installed-packages . "dnf list --installed")
           (list-installed-packages-all . nil)
-          (list-dependencies-of . "rpm -qR")))
-    (yum .
-         ((default-sudo . t)
-          (install . "yum install")
-          (search . "yum search")
-          (uninstall . "yum remove")
-          (update . ("yum update"))
-          (remove-orphaned . "yum autoremove")
-          (list-installed-packages . "yum list")
-          (list-installed-packages-all . nil)
-          (list-dependencies-of . "yum deplist")))))
+          (list-dependencies-of . "rpm -qR")))))
 
 (defcustom system-packages-packagemanager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
@@ -185,7 +217,23 @@ system-packages-packagemanager."
 (defun system-packages-list-dependencies-of (pack)
   "List all the dependencies of PACK."
   (interactive "sWhat package to list dependencies of: ")
-  (system-packages--run-command 'list-dependencies-of))
+  (system-packages--run-command 'list-dependencies-of pack))
+
+;;;###autoload
+(defun system-packages-get-info (pack)
+  "Display local package information of PACK.
+
+With a prefix argument, display remote package information."
+  (interactive "sWhat package to list info for: ")
+  (if current-prefix-arg
+      (system-packages--run-command 'get-info-remote pack)
+    (system-packages--run-command 'get-info pack)))
+
+;;;###autoload
+(defun system-packages-list-files-provided-by (pack)
+  "List the files provided by PACK."
+  (interactive "sWhat package to list provided files of: ")
+  (system-packages--run-command 'list-files-provided-by pack))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; functions that don't take a named package
@@ -214,6 +262,30 @@ named in system-packages-packagemanager. With
   (if arg
       (system-packages--run-command 'list-installed-packages-all)
     (system-packages--run-command 'list-installed-packages)))
-               
+
+;;;###autoload
+(defun system-packages-clean-cache ()
+  "Clean the cache of the package manager."
+  (interactive)
+  (system-packages--run-command 'clean-cache))
+
+;;;###autoload
+(defun system-packages-log ()
+  "Show a log of the actions taken by the package manager."
+  (interactive)
+  (system-packages--run-command 'log))
+
+;;;###autoload
+(defun system-verify-all-packages ()
+  "Check that files owned by packages are present on the system."
+  (interactive)
+  (system-packages--run-command 'verify-all-packages))
+
+;;;###autoload
+(defun system-verify-all-dependencies ()
+  "Verify that all required dependencies are installed on the system."
+  (interactive)
+  (system-packages--run-command 'verify-all-dependencies))
+
 (provide 'system-packages)
 ;;; system-packages.el ends here
