@@ -30,13 +30,5 @@ packages more convenient through emacs.
 * Usage
 
   The package doesn't presume to set keybindings for you, so you may
-  set those up yourself or simply call functions with =M-x=. Here's a
-  list of current functions (all start with =system-packages=)
-
-  - =install=
-  - =uninstall=
-  - =search=
-  - =update=
-  - =remove-orphaned=
-  - =list-installed-packages=
-
+  set those up yourself or simply call functions with =M-x=. All
+  functions start with =system-packages=

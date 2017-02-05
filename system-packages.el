@@ -276,13 +276,13 @@ named in system-packages-packagemanager. With
   (system-packages--run-command 'log))
 
 ;;;###autoload
-(defun system-verify-all-packages ()
+(defun system-packages-verify-all-packages ()
   "Check that files owned by packages are present on the system."
   (interactive)
   (system-packages--run-command 'verify-all-packages))
 
 ;;;###autoload
-(defun system-verify-all-dependencies ()
+(defun system-packagesverify-all-dependencies ()
   "Verify that all required dependencies are installed on the system."
   (interactive)
   (system-packages--run-command 'verify-all-dependencies))
