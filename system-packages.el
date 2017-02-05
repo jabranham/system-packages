@@ -1,6 +1,6 @@
 ;;; system-packages.el --- functions to manage system packages
 
-;; Copyright (C) 2016 J. Alexander Branham
+;; Copyright (C) 2016-2017 J. Alexander Branham
 
 ;; Author: J. Alexander Branham <branham@utexas.edu>
 ;; Maintainer: J. Alexander Branham <branham@utexas.edu>
@@ -58,7 +58,8 @@
            (update . ("brew update" "brew upgrade --all"))
            (remove-orphaned . nil)
            (list-installed-packages . "brew list")
-           (list-installed-packages-all . nil)))
+           (list-installed-packages-all . nil)
+           (list-dependencies-of . "brew deps")))
     ;; Arch-based systems
     (pacaur .
             ((default-sudo . nil)
@@ -66,9 +67,10 @@
              (search . "pacaur -Ss")
              (uninstall . "pacaur -Rs")
              (update . "pacaur -Syu")
-             (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
-             (list-installed-packages . "pacman -Qe")
-             (list-installed-packages-all . "pacman -Q")))
+             (remove-orphaned . "pacaur -Rns $(pacman -Qtdq)")
+             (list-installed-packages . "pacaur -Qe")
+             (list-installed-packages-all . "pacaur -Q")
+             (list-dependencies-of . "pacaur -Qi")))
     (pacman .
             ((default-sudo . t)
              (install . "pacman -S")
@@ -77,7 +79,8 @@
              (update . "pacman -Syu")
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
              (list-installed-packages . "pacman -Qe")
-             (list-installed-packages-all . "pacman -Q")))
+             (list-installed-packages-all . "pacman -Q")
+             (list-dependencies-of . "pacman -Qi")))
     ;; Debian (and Ubuntu) based systems
     (aptitude .
               ((default-sudo . t)
@@ -87,7 +90,8 @@
                (update . ("aptitude update"))
                (remove-orphaned . nil) ; aptitude does this automatically
                (list-installed-packages . "aptitude search '~i!~M'")
-               (list-installed-packages-all . nil)))
+               (list-installed-packages-all . nil)
+               (list-dependencies-of . "apt-cache deps")))
     (apt .
          ((default-sudo . t)
           (install . "apt-get install")
@@ -96,7 +100,8 @@
           (update . ("apt-get update" "apt-get upgrade"))
           (remove-orphaned . "apt-get autoremove")
           (list-installed-packages . nil)
-          (list-installed-packages-all . nil)))
+          (list-installed-packages-all . nil)
+          (list-dependencies-of . "apt-cache deps")))
     ;; Fedora
     (dnf .
          ((default-sudo . t)
@@ -106,7 +111,8 @@
           (update . ("dnf upgrade"))
           (remove-orphaned . "dnf autoremove")
           (list-installed-packages . "dnf list --installed")
-          (list-installed-packages-all . nil)))
+          (list-installed-packages-all . nil)
+          (list-dependencies-of . "rpm -qR")))
     (yum .
          ((default-sudo . t)
           (install . "yum install")
@@ -115,7 +121,8 @@
           (update . ("yum update"))
           (remove-orphaned . "yum autoremove")
           (list-installed-packages . "yum list")
-          (list-installed-packages-all . nil)))))
+          (list-installed-packages-all . nil)
+          (list-dependencies-of . "yum deplist")))))
 
 (defcustom system-packages-packagemanager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
@@ -173,6 +180,12 @@ system-packages-packagemanager."
 system-packages-packagemanager."
   (interactive "sWhat package to uninstall: ")
   (system-packages--run-command 'uninstall pack))
+
+;;;###autoload
+(defun system-packages-list-dependencies-of (pack)
+  "List all the dependencies of PACK."
+  (interactive "sWhat package to list dependencies of: ")
+  (system-packages--run-command 'list-dependencies-of))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; functions that don't take a named package
