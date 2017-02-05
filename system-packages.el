@@ -204,7 +204,7 @@ supported software. Tries to be smart about selecting the
 default."
   :type 'symbol)
 
-(defvar system-packages-usesudo
+(defcustom system-packages-usesudo
   (cdr (assoc 'default-sudo (cdr (assoc system-packages-packagemanager
                                         system-packages-supported-package-managers))))
   "If non-nil, system-packages will use sudo for appropriate
