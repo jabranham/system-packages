@@ -320,7 +320,7 @@ named in system-packages-packagemanager. With
   (system-packages--run-command 'verify-all-packages))
 
 ;;;###autoload
-(defun system-packagesverify-all-dependencies ()
+(defun system-packages-verify-all-dependencies ()
   "Verify that all required dependencies are installed on the system."
   (interactive)
   (system-packages--run-command 'verify-all-dependencies))
