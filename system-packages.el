@@ -1,4 +1,4 @@
-;;; system-packages.el --- functions to manage system packages
+;;; system-packages.el --- functions to manage system packages -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2016-2017 J. Alexander Branham
 
