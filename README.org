@@ -27,6 +27,19 @@ packages more convenient through emacs.
   need sudo privileges. You may set this manually by configuring
   =system-packages-usesudo=
 
+* Supported package managers
+Currently, =system-packages= knows about the following package managers.
+You can see exactly what commands are associated with =system-packages= commands by checking =system-packages-supported-package-managers=.
+The default package manager that we use is the first one found from this list:
+- brew
+- pacaur
+- pacman
+- aptitude
+- apt
+- emerge
+- zypper
+- dnf
+
 * Usage
 
   The package doesn't presume to set keybindings for you, so you may
