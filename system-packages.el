@@ -190,7 +190,27 @@
           (remove-orphaned . "dnf autoremove")
           (list-installed-packages . "dnf list --installed")
           (list-installed-packages-all . nil)
-          (list-dependencies-of . "rpm -qR")))))
+          (list-dependencies-of . "rpm -qR")))
+    ;; Void
+    ;; xbps is the name of the package manager, but that doesn't appear as an
+    ;; executable, so let's just call it xbps-install:
+    (xbps-install .
+                  ((default-sudo . t)
+                   (install . "xbps-install")
+                   (search . "xbps-query -Rs")
+                   (uninstall . "xbps-remove -R")
+                   (update . ("xbps-install -Su"))
+                   (clean-cache . "xbps-remove -O")
+                   (log . nil)
+                   (get-info . "xbps-query")
+                   (get-info-remote . "xbps-query -R")
+                   (list-files-provided-by . "xbps-query -f")
+                   (verify-all-packages . nil)
+                   (verify-all-dependencies . "xbps-pkgdb -a")
+                   (remove-orphaned . "dnf autoremove")
+                   (list-installed-packages . "xbps-query -l ")
+                   (list-installed-packages-all . "xbps-query -l ")
+                   (list-dependencies-of . "xbps-query -x")))))
 
 (defcustom system-packages-packagemanager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
