@@ -244,7 +244,7 @@ default."
     (when system-packages-usesudo
       (setq command (mapcar (lambda (part) (concat "sudo " part)) command)))
     (setq command (mapconcat 'identity command " && "))
-    (async-shell-command (mapconcat 'identity (list command pack) " "))))
+    (async-shell-command (mapconcat 'identity (list command pack) " ") "*system-packages*")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; functions on named packages
