@@ -67,6 +67,23 @@
            (list-installed-packages . "brew list --installed")
            (list-installed-packages-all . "brew list")
            (list-dependencies-of . "brew deps")))
+    (port .
+          ((default-sudo . t)
+           (install . "port install")
+           (search . "port search")
+           (uninstall . "port uninstall")
+           (update . ("port upgrade" "port upgrade outdated"))
+           (clean-cache . "port clean --all")
+           (log . "port log")
+           (get-info . "port info")
+           (get-info-remote . nil)
+           (list-files-provided-by . "port contents")
+           (verify-all-packages . nil)
+           (verify-all-dependencies . nil)
+           (remove-orphaned . "port uninstall leaves")
+           (list-installed-packages . "port list installed")
+           (list-installed-packages-all . "port list installed")
+           (list-dependencies-of . "port deps")))
     ;; Arch-based systems
     (pacaur .
             ((default-sudo . nil)
