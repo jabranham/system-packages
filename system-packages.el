@@ -72,7 +72,7 @@
            (install . "port install")
            (search . "port search")
            (uninstall . "port uninstall")
-           (update . ("port upgrade" "port upgrade outdated"))
+           (update . ("port sync" "port upgrade outdated"))
            (clean-cache . "port clean --all")
            (log . "port log")
            (get-info . "port info")
@@ -81,8 +81,8 @@
            (verify-all-packages . nil)
            (verify-all-dependencies . nil)
            (remove-orphaned . "port uninstall leaves")
-           (list-installed-packages . "port list installed")
-           (list-installed-packages-all . "port list installed")
+           (list-installed-packages . "port installed")
+           (list-installed-packages-all . "port installed")
            (list-dependencies-of . "port deps")))
     ;; Arch-based systems
     (pacaur .
