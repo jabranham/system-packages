@@ -239,6 +239,7 @@
 See `system-packages-supported-package-managers' for a list of
 supported software.  Tries to be smart about selecting the
 default."
+  :group 'system-packages
   :type 'symbol)
 
 (defcustom system-packages-usesudo
@@ -246,7 +247,9 @@ default."
                                         system-packages-supported-package-managers))))
   "If non-nil, system-packages uses sudo for appropriate commands.
 
-Tries to be smart for selecting the default.")
+Tries to be smart for selecting the default."
+  :group 'system-packages)
+
 
 (defun system-packages--run-command (action &optional pack args)
   "Run a command that affects system packages.
