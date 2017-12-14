@@ -7,8 +7,9 @@ packages more convenient through emacs.
 
 * Installation
 
-  System packages is available on [[https://melpa.org/#/][MELPA]]. If you use [[https://github.com/jwiegley/use-package][use-package]] and
-  have MELPA set up correctly, all you'll need is something like the following:
+  System packages is available on [[https://melpa.org/#/][MELPA]]. If you use [[https://github.com/jwiegley/use-package][use-package]] and have
+  MELPA set up correctly, all you'll need is something like the
+  following:
 
   #+BEGIN_SRC emacs-lisp :eval never
     (use-package system-packages
@@ -17,31 +18,37 @@ packages more convenient through emacs.
 
 * Configuration
   
-  The package attempts to guess which package manager you use. If it
+  The package attempts to guess which package manager you use.  If it
   guesses wrong (or you'd like to set it manually), you may modify the
-  variable =system-packages-packagemanager=. 
+  variable =system-packages-packagemanager=.
 
   We also attempt to guess whether or not to use sudo with appropriate
   commands (like installing and uninstalling packages). Some package
   managers (like homebrew) warn not to use sudo, others (like =apt=)
   need sudo privileges. You may set this manually by configuring
-  =system-packages-usesudo=
+  =system-packages-usesudo=.
+
+  Other package customization options can be accessed with M-x
+  =customize-group RET system-packages RET=.
 
 * Supported package managers
-Currently, =system-packages= knows about the following package managers.
-You can see exactly what commands are associated with =system-packages= commands by checking =system-packages-supported-package-managers=.
-The default package manager that we use is the first one found from this list:
-- brew
-- pacaur
-- pacman
-- aptitude
-- apt
-- emerge
-- zypper
-- dnf
+  Currently, =system-packages= knows about the following package managers.
+  You can see exactly what commands are associated with =system-packages=
+  commands by checking =system-packages-supported-package-managers=.  The
+  default package manager that we use is the first one found from this
+  list:
+
+  - brew
+  - pacaur
+  - pacman
+  - aptitude
+  - apt
+  - emerge
+  - zypper
+  - dnf
 
 * Usage
 
-  The package doesn't presume to set keybindings for you, so you may
-  set those up yourself or simply call functions with =M-x=. All
-  functions start with =system-packages=
+  The package doesn't presume to set keybindings for you, so you may set
+  those up yourself or simply call functions with =M-x=. All commands
+  start with =system-packages=
