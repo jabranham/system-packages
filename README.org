@@ -39,6 +39,7 @@ packages more convenient through emacs.
   list:
 
   - brew
+  - macports
   - pacaur
   - pacman
   - aptitude
