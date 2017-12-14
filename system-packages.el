@@ -66,7 +66,8 @@
            (remove-orphaned . nil)
            (list-installed-packages . "brew list --installed")
            (list-installed-packages-all . "brew list")
-           (list-dependencies-of . "brew deps")))
+           (list-dependencies-of . "brew deps")
+           (noconfirm . nil)))
     (port .
           ((default-sudo . t)
            (install . "port install")
@@ -83,7 +84,8 @@
            (remove-orphaned . "port uninstall leaves")
            (list-installed-packages . "port installed")
            (list-installed-packages-all . "port installed")
-           (list-dependencies-of . "port deps")))
+           (list-dependencies-of . "port deps")
+           (noconfirm . nil)))
     ;; Arch-based systems
     (pacaur .
             ((default-sudo . nil)
@@ -101,7 +103,8 @@
              (remove-orphaned . "pacaur -Rns $(pacman -Qtdq)")
              (list-installed-packages . "pacaur -Qe")
              (list-installed-packages-all . "pacaur -Q")
-             (list-dependencies-of . "pacaur -Qi")))
+             (list-dependencies-of . "pacaur -Qi")
+             (noconfirm . "--noconfirm")))
     (pacman .
             ((default-sudo . t)
              (install . "pacman -S")
@@ -118,7 +121,8 @@
              (remove-orphaned . "pacman -Rns $(pacman -Qtdq)")
              (list-installed-packages . "pacman -Qe")
              (list-installed-packages-all . "pacman -Q")
-             (list-dependencies-of . "pacman -Qi")))
+             (list-dependencies-of . "pacman -Qi")
+             (noconfirm . "--noconfirm")))
     ;; Debian (and Ubuntu) based systems
     (apt .
          ((default-sudo . t)
@@ -136,7 +140,8 @@
           (remove-orphaned . "apt autoremove")
           (list-installed-packages . nil)
           (list-installed-packages-all . nil)
-          (list-dependencies-of . "apt-cache deps")))
+          (list-dependencies-of . "apt-cache deps")
+          (noconfirm . "-y")))
     (aptitude .
               ((default-sudo . t)
                (install . "aptitude install")
@@ -153,7 +158,8 @@
                (remove-orphaned . nil) ; aptitude does this automatically
                (list-installed-packages . "aptitude search '~i!~M'")
                (list-installed-packages-all . "aptitude search '~i!~M'")
-               (list-dependencies-of . "apt-cache deps")))
+               (list-dependencies-of . "apt-cache deps")
+               (noconfirm . "-y")))
     ;; Gentoo
     (emerge .
             ((default-sudo . t)
@@ -171,7 +177,8 @@
              (remove-orphaned . "emerge --depclean")
              (list-installed-packages . nil)
              (list-installed-packages-all . nil)
-             (list-dependencies-of . "emerge -ep")))
+             (list-dependencies-of . "emerge -ep")
+             (noconfirm . nil)))
     ;; openSUSE
     (zypper .
             ((default-sudo . t)
@@ -189,7 +196,8 @@
              (remove-orphaned . "zypper rm -u")
              (list-installed-packages . nil)
              (list-installed-packages-all . nil)
-             (list-dependencies-of . "zypper info --requires")))
+             (list-dependencies-of . "zypper info --requires")
+             (noconfirm . nil)))
     ;; Fedora
     (dnf .
          ((default-sudo . t)
@@ -207,7 +215,8 @@
           (remove-orphaned . "dnf autoremove")
           (list-installed-packages . "dnf list --installed")
           (list-installed-packages-all . nil)
-          (list-dependencies-of . "rpm -qR")))
+          (list-dependencies-of . "rpm -qR")
+          (noconfirm . nil)))
     ;; Void
     ;; xbps is the name of the package manager, but that doesn't appear as an
     ;; executable, so let's just call it xbps-install:
@@ -227,7 +236,8 @@
                    (remove-orphaned . "dnf autoremove")
                    (list-installed-packages . "xbps-query -l ")
                    (list-installed-packages-all . "xbps-query -l ")
-                   (list-dependencies-of . "xbps-query -x")))))
+                   (list-dependencies-of . "xbps-query -x")
+                   (noconfirm . nil)))))
 
 (defcustom system-packages-packagemanager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
@@ -250,6 +260,10 @@ default."
 Tries to be smart for selecting the default."
   :group 'system-packages)
 
+(defcustom system-packages-noconfirm nil
+  "If non-nil, bypass prompts asking the user to confirm package upgrades."
+  :group 'system-packages
+  :type 'boolean)
 
 (defun system-packages--run-command (action &optional pack args)
   "Run a command that affects system packages.
@@ -263,7 +277,11 @@ ARGS gets passed to the command and is useful for passing options
 to the package manager."
   (let ((command
          (cdr (assoc action (cdr (assoc system-packages-packagemanager
-                                        system-packages-supported-package-managers))))))
+                                        system-packages-supported-package-managers)))))
+        (noconfirm (when system-packages-noconfirm
+                     (cdr (assoc 'noconfirm
+                                 (cdr (assoc system-packages-packagemanager
+                                             system-packages-supported-package-managers)))))))
     (unless command
       (error (format "%S not supported in %S" action system-packages-packagemanager)))
     (unless (listp command)
@@ -272,6 +290,7 @@ to the package manager."
       (setq command (mapcar (lambda (part) (concat "sudo " part)) command)))
     (setq command (mapconcat 'identity command " && "))
     (setq command (mapconcat 'identity (list command pack) " "))
+    (setq args (concat args noconfirm))
     (when args
       (setq command (concat command args)))
     (async-shell-command command "*system-packages*")))
