@@ -306,6 +306,7 @@ to the package manager."
 Use the package manager from `system-packages-packagemanager' to
 install PACK.  You may use ARGS to pass options to the package
 manger."
+  (interactive "sPackage to install: ")
   (system-packages--run-command 'install pack args))
 
 ;;;###autoload
