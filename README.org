@@ -47,6 +47,7 @@ packages more convenient through emacs.
   - emerge
   - zypper
   - dnf
+  - xbps
 
 * Usage
 
