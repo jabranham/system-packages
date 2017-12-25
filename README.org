@@ -42,8 +42,8 @@ packages more convenient through emacs.
   - macports
   - pacaur
   - pacman
-  - aptitude
   - apt
+  - aptitude
   - emerge
   - zypper
   - dnf
