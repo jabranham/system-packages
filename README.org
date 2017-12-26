@@ -40,7 +40,6 @@ packages more convenient through emacs.
 
   - brew
   - macports
-  - pacaur
   - pacman
   - apt
   - aptitude
