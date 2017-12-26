@@ -53,3 +53,36 @@ packages more convenient through emacs.
   The package doesn't presume to set keybindings for you, so you may set
   those up yourself or simply call functions with =M-x=. All commands
   start with =system-packages=
+* Adding other package managers
+It is straightforward to add support for package managers.  First, add
+the commands to =system-packages-supported-package-managers= like so:
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'system-packages-supported-package-managers
+               '(pacaur .
+                        ((default-sudo . nil)
+                         (install . "pacaur -S")
+                         (search . "pacaur -Ss")
+                         (uninstall . "pacaur -Rs")
+                         (update . "pacaur -Syu")
+                         (clean-cache . "pacaur -Sc")
+                         (log . "cat /var/log/pacman.log")
+                         (get-info . "pacaur -Qi")
+                         (get-info-remote . "pacaur -Si")
+                         (list-files-provided-by . "pacaur -Ql")
+                         (verify-all-packages . "pacaur -Qkk")
+                         (verify-all-dependencies . "pacaur -Dk")
+                         (remove-orphaned . "pacaur -Rns $(pacman -Qtdq)")
+                         (list-installed-packages . "pacaur -Qe")
+                         (list-installed-packages-all . "pacaur -Q")
+                         (list-dependencies-of . "pacaur -Qi")
+                         (noconfirm . "--noconfirm"))))
+#+END_SRC
+
+You may then need to adjust =system-packages-packagemanager= and
+=system-packages-usesudo= accordingly:
+
+#+BEGIN_SRC emacs-lisp
+  (setq system-packages-usesudo t)
+  (setq system-packages-packagemanager "pacaur")
+#+END_SRC
