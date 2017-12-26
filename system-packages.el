@@ -221,7 +221,7 @@
                    (list-dependencies-of . "xbps-query -x")
                    (noconfirm . nil)))))
 
-(defcustom system-packages-packagemanager
+(defcustom system-packages-package-manager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
            for path = (executable-find (symbol-name name))
            when path
@@ -234,13 +234,19 @@ default."
   :group 'system-packages
   :type 'symbol)
 
-(defcustom system-packages-usesudo
+(define-obsolete-variable-alias 'system-packages-packagemanager
+  'system-packages-package-manager "2017-12-25")
+
+(defcustom system-packages-use-sudo
   (cdr (assoc 'default-sudo (cdr (assoc system-packages-packagemanager
                                         system-packages-supported-package-managers))))
   "If non-nil, system-packages uses sudo for appropriate commands.
 
 Tries to be smart for selecting the default."
   :group 'system-packages)
+
+(define-obsolete-variable-alias 'system-packages-usesudo
+  'system-packages-use-sudo "2017-12-25")
 
 (defcustom system-packages-noconfirm nil
   "If non-nil, bypass prompts asking the user to confirm package upgrades."
