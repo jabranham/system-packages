@@ -244,7 +244,7 @@
            for path = (executable-find (symbol-name name))
            when path
            return name)
-  "String containing the package manager to use.
+  "Symbol containing the package manager to use.
 
 See `system-packages-supported-package-managers' for a list of
 supported software.  Tries to be smart about selecting the
