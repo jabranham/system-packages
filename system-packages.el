@@ -90,7 +90,7 @@
             ((default-sudo . t)
              (install . "pacman -S")
              (search . "pacman -Ss")
-             (uninstall . "pacman -Rs")
+             (uninstall . "pacman -Rns")
              (update . "pacman -Syu")
              (clean-cache . "pacman -Sc")
              (log . "cat /var/log/pacman.log")
