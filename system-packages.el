@@ -292,7 +292,7 @@ to the package manager."
       (error (format "%S not supported in %S" action system-packages-package-manager)))
     (unless (listp command)
       (setq command (list command)))
-    (when system-packages-usesudo
+    (when system-packages-use-sudo
       (setq command (mapcar (lambda (part) (concat "sudo " part)) command)))
     (setq command (mapconcat 'identity command " && "))
     (setq command (mapconcat 'identity (list command pack) " "))
