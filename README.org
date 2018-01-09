@@ -20,7 +20,7 @@ packages more convenient through emacs.
   
   The package attempts to guess which package manager you use.  If it
   guesses wrong (or you'd like to set it manually), you may modify the
-  variable =system-packages-packagemanager=.
+  variable =system-packages-package-manager=.
 
   We also attempt to guess whether or not to use sudo with appropriate
   commands (like installing and uninstalling packages). Some package
@@ -80,10 +80,10 @@ the commands to =system-packages-supported-package-managers= like so:
                          (noconfirm . "--noconfirm"))))
 #+END_SRC
 
-You may then need to adjust =system-packages-packagemanager= and
+You may then need to adjust =system-packages-package-manager= and
 =system-packages-usesudo= accordingly:
 
 #+BEGIN_SRC emacs-lisp
   (setq system-packages-usesudo t)
-  (setq system-packages-packagemanager "pacaur")
+  (setq system-packages-package-manager "pacaur")
 #+END_SRC

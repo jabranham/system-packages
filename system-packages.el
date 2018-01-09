@@ -256,7 +256,7 @@ default."
   'system-packages-package-manager "2017-12-25")
 
 (defcustom system-packages-use-sudo
-  (cdr (assoc 'default-sudo (cdr (assoc system-packages-packagemanager
+  (cdr (assoc 'default-sudo (cdr (assoc system-packages-package-manager
                                         system-packages-supported-package-managers))))
   "If non-nil, system-packages uses sudo for appropriate commands.
 
@@ -282,14 +282,14 @@ used to operation on specific packages.
 ARGS gets passed to the command and is useful for passing options
 to the package manager."
   (let ((command
-         (cdr (assoc action (cdr (assoc system-packages-packagemanager
+         (cdr (assoc action (cdr (assoc system-packages-package-manager
                                         system-packages-supported-package-managers)))))
         (noconfirm (when system-packages-noconfirm
                      (cdr (assoc 'noconfirm
-                                 (cdr (assoc system-packages-packagemanager
+                                 (cdr (assoc system-packages-package-manager
                                              system-packages-supported-package-managers)))))))
     (unless command
-      (error (format "%S not supported in %S" action system-packages-packagemanager)))
+      (error (format "%S not supported in %S" action system-packages-package-manager)))
     (unless (listp command)
       (setq command (list command)))
     (when system-packages-usesudo
@@ -309,7 +309,7 @@ to the package manager."
 (defun system-packages-install (pack &optional args)
   "Install system packages.
 
-Use the package manager from `system-packages-packagemanager' to
+Use the package manager from `system-packages-package-manager' to
 install PACK.  You may use ARGS to pass options to the package
 manger."
   (interactive "sPackage to install: ")
@@ -319,7 +319,7 @@ manger."
 (defun system-packages-search (pack &optional args)
   "Search for system packages.
 
-Use the package manager named in `system-packages-packagemanager'
+Use the package manager named in `system-packages-package-manager'
 to search for PACK.  You may use ARGS to pass options to the
 package manager."
   (interactive "sSearch string: ")
@@ -330,7 +330,7 @@ package manager."
   "Uninstall system packages.
 
 Uses the package manager named in
-`system-packages-packagemanager' to uninstall PACK.  You may use
+`system-packages-package-manager' to uninstall PACK.  You may use
 ARGS to pass options to the package manager."
   (interactive "sWhat package to uninstall: ")
   (system-packages--run-command 'uninstall pack args))
@@ -370,7 +370,7 @@ You may use ARGS to pass options to the package manager."
 (defun system-packages-update (&optional args)
   "Update system packages.
 
-Use the package manager `system-packages-packagemanager'.  You
+Use the package manager `system-packages-package-manager'.  You
 may use ARGS to pass options to the package manger."
   (interactive)
   (system-packages--run-command 'update nil args))
@@ -380,7 +380,7 @@ may use ARGS to pass options to the package manger."
   "Remove orphaned packages.
 
 Uses the package manager named in
-`system-packages-packagemanager'.  You may use ARGS to pass
+`system-packages-package-manager'.  You may use ARGS to pass
 options to the package manger."
   (interactive)
   (system-packages--run-command 'remove-orphaned nil args))
@@ -390,7 +390,7 @@ options to the package manger."
   "List explicitly installed packages.
 
 Uses the package manager named in
-`system-packages-packagemanager'.  With
+`system-packages-package-manager'.  With
 \\[universal-argument] (for ALL), list all installed packages.
 You may use ARGS to pass options to the package manger."
   (interactive "P")
@@ -408,7 +408,7 @@ You may use ARGS to pass options to the package manger."
 
 ;;;###autoload
 (defun system-packages-log (&optional args)
-  "Show a log from `system-packages-packagemanager'.
+  "Show a log from `system-packages-package-manager'.
 
 You may use ARGS to pass options to the package manger."
   (interactive)
