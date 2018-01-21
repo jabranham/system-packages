@@ -261,6 +261,7 @@ default."
   "If non-nil, system-packages uses sudo for appropriate commands.
 
 Tries to be smart for selecting the default."
+  :type 'boolean
   :group 'system-packages)
 
 (define-obsolete-variable-alias 'system-packages-usesudo
