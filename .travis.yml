@@ -1,9 +1,9 @@
 language: generic
 
-sudo: enabled
+sudo: required
 
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-elisp/ppa
+  - sudo add-apt-repository ppa:ubuntu-elisp/ppa -y
   - sudo apt-get -qq update
   - sudo apt-get install emacs-snapshot
 
