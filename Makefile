@@ -12,4 +12,4 @@ all: compile
 compile: $(ELC)
 
 %.elc: %.el
-	$(EMACS_BATCH) --eval "(progn (setq byte-compile-error-on-warn t) (batch-byte-compile))" $<
+	$(EMACS_BATCH) --eval "(progn (message (emacs-version)) (setq byte-compile-error-on-warn t) (batch-byte-compile))" $<
