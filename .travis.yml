@@ -8,6 +8,6 @@ before_install:
   - sudo apt-get install emacs-snapshot
 
 script:
-  - emacs --version
+  - emacs-snapshot --version
   - make
 

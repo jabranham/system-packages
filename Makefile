@@ -1,4 +1,4 @@
-EMACS ?= emacs
+EMACS ?= emacs-snapshot
 EMACS_FLAGS = --quick --directory .
 EMACS_BATCH = $(EMACS) --batch $(EMACS_FLAGS)
 
