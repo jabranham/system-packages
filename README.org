@@ -87,3 +87,5 @@ You may then need to adjust =system-packages-package-manager= and
   (setq system-packages-use-sudo t)
   (setq system-packages-package-manager "pacaur")
 #+END_SRC
+* See also
+Helm users might like [[https://github.com/emacs-helm/helm-system-packages][helm-system-packages]]
