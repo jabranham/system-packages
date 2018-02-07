@@ -297,7 +297,7 @@ to the package manager."
     (unless (listp command)
       (setq command (list command)))
     (when system-packages-use-sudo
-      (setq command (mapcar (lambda (part) (concat "sudo " part)) command)))
+      (setq command (mapcar (lambda (part) (concat "LANG=C sudo " part)) command)))
     (setq command (mapconcat 'identity command " && "))
     (setq command (mapconcat 'identity (list command pack) " "))
     (setq args (concat args noconfirm))
