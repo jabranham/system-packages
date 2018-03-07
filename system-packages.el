@@ -76,7 +76,7 @@
            (install . "brew install")
            (search . "brew search")
            (uninstall . "brew uninstall")
-           (update . ("brew update" "brew upgrade --all"))
+           (update . ("brew update" "brew upgrade"))
            (clean-cache . "brew cleanup")
            (log . nil)
            (get-info . nil)
