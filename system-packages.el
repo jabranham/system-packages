@@ -150,7 +150,7 @@
                (install . "aptitude install")
                (search . "aptitude search")
                (uninstall . "aptitude remove")
-               (update . ("aptitude update"))
+               (update . ("apt update" "aptitude safe-upgrade"))
                (clean-cache . "aptitude clean")
                (log . "cat /var/log/dpkg.log")
                (get-info . "aptitude show")
