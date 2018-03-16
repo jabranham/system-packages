@@ -141,8 +141,8 @@
           (verify-all-packages . "debsums")
           (verify-all-dependencies . "apt-get check")
           (remove-orphaned . "apt-get autoremove")
-          (list-installed-packages . nil)
-          (list-installed-packages-all . nil)
+          (list-installed-packages . "dpkg -l")
+          (list-installed-packages-all . "dpkg -l")
           (list-dependencies-of . "apt-cache deps")
           (noconfirm . "-y")))
     (aptitude .
