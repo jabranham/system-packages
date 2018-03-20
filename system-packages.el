@@ -85,7 +85,7 @@
            (verify-all-packages . nil)
            (verify-all-dependencies . nil)
            (remove-orphaned . nil)
-           (list-installed-packages . "brew list --installed")
+           (list-installed-packages . "brew list")
            (list-installed-packages-all . "brew list")
            (list-dependencies-of . "brew deps")
            (noconfirm . nil)))
