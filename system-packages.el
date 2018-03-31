@@ -51,6 +51,25 @@
 
 (defconst system-packages-supported-package-managers
   '(
+    ;; guix
+    (guix .
+          ((default-sudo . nil)
+           (install . "guix package -i")
+           (search . "guix package -s")
+           (uninstall . "guix package -r")
+           (update . ("guix package --upgrade"))
+           (clean-cache . nil)
+           (log . nil)
+           (get-info . nil)
+           (get-info-remote . nil)
+           (list-files-provided-by . nil)
+           (verify-all-packages . nil)
+           (verify-all-dependencies . nil)
+           (remove-orphaned . nil)
+           (list-installed-packages . "guix package -I")
+           (list-installed-packages-all . "guix package -I")
+           (list-dependencies-of . nil)
+           (noconfirm . nil)))
     ;; nix
     (nix-env .
              ((default-sudo . nil)
