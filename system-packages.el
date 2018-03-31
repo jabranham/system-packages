@@ -275,7 +275,18 @@ See `system-packages-supported-package-managers' for a list of
 supported software.  Tries to be smart about selecting the
 default."
   :group 'system-packages
-  :type 'symbol)
+  :type '(choice
+          (const guix)
+          (const nix-env)
+          (const brew)
+          (const port)
+          (const pacman)
+          (const apt)
+          (const aptitude)
+          (const emerge)
+          (const zypper)
+          (const dnf)
+          (const xbps-install)))
 
 (define-obsolete-variable-alias 'system-packages-packagemanager
   'system-packages-package-manager "2017-12-25")
