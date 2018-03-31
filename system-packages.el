@@ -274,7 +274,6 @@ The key is the package manager and values (usually) commands.")
 See `system-packages-supported-package-managers' for a list of
 supported software.  Tries to be smart about selecting the
 default."
-  :group 'system-packages
   :type '(choice
           (const guix)
           (const nix-env)
@@ -297,15 +296,13 @@ default."
   "If non-nil, system-packages uses sudo for appropriate commands.
 
 Tries to be smart for selecting the default."
-  :type 'boolean
-  :group 'system-packages)
+  :type 'boolean)
 
 (define-obsolete-variable-alias 'system-packages-usesudo
   'system-packages-use-sudo "2017-12-25")
 
 (defcustom system-packages-noconfirm nil
   "If non-nil, bypass prompts asking the user to confirm package upgrades."
-  :group 'system-packages
   :type 'boolean)
 
 (defun system-packages--run-command (action &optional pack args)
