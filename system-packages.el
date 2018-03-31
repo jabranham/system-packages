@@ -40,8 +40,8 @@
 ;;
 
 ;;; Code:
-
-(require 'cl-lib)
+(eval-when-compile
+  (require 'cl-lib))
 
 (defgroup system-packages nil
   "Manages system packages"
