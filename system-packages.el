@@ -49,7 +49,7 @@
   :prefix "system-packages"
   :group 'packages)
 
-(defconst system-packages-supported-package-managers
+(defvar system-packages-supported-package-managers
   '(
     ;; guix
     (guix .
@@ -259,7 +259,10 @@
                    (list-installed-packages . "xbps-query -l ")
                    (list-installed-packages-all . "xbps-query -l ")
                    (list-dependencies-of . "xbps-query -x")
-                   (noconfirm . nil)))))
+                   (noconfirm . nil))))
+  "An alist of package manager commands.
+The key is the package manager and values (usually) commands.")
+(put 'system-packages-supported-package-managers 'risky-local-variable t)
 
 (defcustom system-packages-package-manager
   (cl-loop for (name . prop) in system-packages-supported-package-managers
