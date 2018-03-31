@@ -38,6 +38,7 @@ packages more convenient through emacs.
   default package manager that we use is the first one found from this
   list:
 
+  - guix
   - nix
   - brew
   - macports
