@@ -34,3 +34,12 @@
                  (system-packages-package-manager 'pacman))
              (system-packages-get-command 'install))
            "sudo pacman -S --noconfirm")))
+
+(ert-deftest system-packages-errors ()
+  "Error when we don't know a command."
+  (should-error
+   (let ((system-packages-package-manager 'pacaur))
+     (system-packages-get-command 'install)))
+  (should-error
+   (let ((system-packages-package-manager 'guix))
+     (system-packages-get-command 'clean-cache))))
