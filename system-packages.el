@@ -305,16 +305,12 @@ Tries to be smart for selecting the default."
   "If non-nil, bypass prompts asking the user to confirm package upgrades."
   :type 'boolean)
 
-(defun system-packages--run-command (action &optional pack args)
-  "Run a command that affects system packages.
-
-ACTION can be `default-sudo', `install', `search', `uninstall'
-etc.  Run the command according to
-`system-packages-supported-package-managers' and ACTION.  PACK is
-used to operation on specific packages.
-
-ARGS gets passed to the command and is useful for passing options
-to the package manager."
+(defun system-packages-get-command (action &optional pack args)
+  "Return a command to run as a string.
+ACTION should be in
+`system-packages-supported-package-managers' (e.g. 'install).
+PACK is used to operate on a specific package, and ARGS is a way
+of passing additional arguments to the package manager."
   (let ((command
          (cdr (assoc action (cdr (assoc system-packages-package-manager
                                         system-packages-supported-package-managers)))))
@@ -332,7 +328,13 @@ to the package manager."
     (setq command (mapconcat 'identity (list command pack) " "))
     (setq args (concat args noconfirm))
     (when args
-      (setq command (concat command args)))
+      (setq command (concat command args)))))
+
+(defun system-packages--run-command (action &optional pack args)
+  "Run a command asynchronously using the system's package manager.
+See `system-packages-get-command' for how to use ACTION, PACK,
+and ARGS."
+  (let ((command (system-packages-get-command action pack args)))
     (async-shell-command command "*system-packages*")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
