@@ -74,7 +74,7 @@
     (nix-env .
              ((default-sudo . nil)
               (install . "nix-env -i")
-              (search . "nix-env -qaP")
+              (search . "nix search")
               (uninstall . "nix-env -e")
               (update . ("nix-env -u" ))
               (clean-cache . nil)
