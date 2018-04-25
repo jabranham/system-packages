@@ -359,6 +359,7 @@ manger."
 Search for PACK with `system-packages-package-installed-p', and
 install the package if not found.  Use ARGS to pass options to
 the package manager."
+  (interactive "sPackage to ensure is present: ")
   (if (system-packages-package-installed-p pack)
       t
     (system-packages-install pack args)))
