@@ -33,7 +33,13 @@
                  (system-packages-use-sudo t)
                  (system-packages-package-manager 'pacman))
              (system-packages-get-command 'install))
-           "sudo pacman -S --noconfirm")))
+           "sudo pacman -S --noconfirm"))
+  (should (string=
+           (let ((system-packages-noconfirm t)
+                 (system-packages-use-sudo t)
+                 (system-packages-package-manager 'apt))
+             (system-packages-get-command 'install "rg"))
+           "sudo apt-get install rg -y")))
 
 (ert-deftest system-packages-errors ()
   "Error when we don't know a command."

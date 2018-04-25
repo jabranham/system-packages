@@ -328,9 +328,9 @@ of passing additional arguments to the package manager."
       (setq command (mapcar (lambda (part) (concat "sudo " part)) command)))
     (setq command (mapconcat 'identity command " && "))
     (setq command (mapconcat 'identity (list command pack) " "))
-    (setq args (concat args noconfirm))
-    (when args
-      (setq command (concat command args)))))
+    (when noconfirm
+      (setq args (concat args (and pack " ") noconfirm)))
+    (concat command args)))
 
 (defun system-packages--run-command (action &optional pack args)
   "Run a command asynchronously using the system's package manager.
