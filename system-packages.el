@@ -354,6 +354,22 @@ manger."
   (system-packages--run-command 'install pack args))
 
 ;;;###autoload
+(defun system-packages-ensure (pack &optional args)
+  "Ensure PACK is installed on system.
+Search for PACK with `system-packages-package-installed-p', and
+install the package if not found.  Use ARGS to pass options to
+the package manager."
+  (if (system-packages-package-installed-p pack)
+      t
+    (system-packages-install pack args)))
+
+;;;###autoload
+(defalias 'system-packages-package-installed-p #'executable-find
+  "Return t if PACK is installed.
+Currently an alias for `executable-find', so it will give wrong
+results if the package and executable names are different.")
+
+;;;###autoload
 (defun system-packages-search (pack &optional args)
   "Search for system packages.
 
