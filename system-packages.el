@@ -6,7 +6,7 @@
 ;; Maintainer: J. Alexander Branham <branham@utexas.edu>
 ;; URL: https://github.com/jabranham/system-packages
 ;; Package-Requires: ((emacs "24.3"))
-;; Version: 1.0.4
+;; Version: 1.0.5
 
 
 ;; This file is not part of GNU Emacs.
