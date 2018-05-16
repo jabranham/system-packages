@@ -15,10 +15,10 @@
              (system-packages-get-command 'install))
            "guix package -i "))
   (should (string=
-           (let ((system-packages-use-sudo t)
+           (let ((system-packages-use-sudo nil)
                  (system-packages-package-manager 'pacman))
              (system-packages-get-command 'install))
-           "sudo pacman -S ")))
+           "pacman -S ")))
 
 (ert-deftest system-packages-get-install-noconfirm ()
   "Return correct installation command."
@@ -30,16 +30,16 @@
            "guix package -i "))
   (should (string=
            (let ((system-packages-noconfirm t)
-                 (system-packages-use-sudo t)
+                 (system-packages-use-sudo nil)
                  (system-packages-package-manager 'pacman))
              (system-packages-get-command 'install))
-           "sudo pacman -S --noconfirm"))
+           "pacman -S --noconfirm"))
   (should (string=
            (let ((system-packages-noconfirm t)
-                 (system-packages-use-sudo t)
+                 (system-packages-use-sudo nil)
                  (system-packages-package-manager 'apt))
              (system-packages-get-command 'install "rg"))
-           "sudo apt-get install rg -y")))
+           "apt-get install rg -y")))
 
 (ert-deftest system-packages-errors ()
   "Error when we don't know a command."

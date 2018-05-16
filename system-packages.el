@@ -324,8 +324,6 @@ of passing additional arguments to the package manager."
       (error (format "%S not supported in %S" action system-packages-package-manager)))
     (unless (listp command)
       (setq command (list command)))
-    (when system-packages-use-sudo
-      (setq command (mapcar (lambda (part) (concat "sudo " part)) command)))
     (setq command (mapconcat 'identity command " && "))
     (setq command (mapconcat 'identity (list command pack) " "))
     (when noconfirm
@@ -336,7 +334,10 @@ of passing additional arguments to the package manager."
   "Run a command asynchronously using the system's package manager.
 See `system-packages-get-command' for how to use ACTION, PACK,
 and ARGS."
-  (let ((command (system-packages-get-command action pack args)))
+  (let ((command (system-packages-get-command action pack args))
+        (default-directory (if system-packages-use-sudo
+                               "/sudo::"
+                             default-directory)))
     (async-shell-command command "*system-packages*")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
